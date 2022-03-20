@@ -1,0 +1,21 @@
+{% extends 'todolist/index.html' %}
+
+{% block content %}
+<div class="searcher">
+    <form action="/" method="get">
+        <input type="text" name="q" id="q" placeholder="Поиск" value="{{ search }}">
+    </form>
+</div>
+<div class="content">
+    {% for todo in list %}
+    <div class="task{% if todo.done %} complete{% endif %}"><a href="/{{ todo.id }}">{{todo.title}}</a></div>
+    {% endfor %}
+</div>
+<div class="addform">
+    <p>Новая задача:</p>
+    <form method="post" action="/add">
+        <input type="text" name="title" id="title">
+        <input type="submit" value="Добавить">
+    </form>
+</div>
+{% endblock %}
