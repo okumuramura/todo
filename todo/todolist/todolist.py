@@ -72,7 +72,9 @@ def add_task() -> Response:
     logger.info(
         'user with ip %s added task \"%s\"', request.remote_addr, task_title
     )
-    return redirect(url_for('.todo_list', offset=(task_num - 1) // 5 * 5), code=302)
+    return redirect(
+        url_for('.todo_list', offset=(task_num - 1) // 5 * 5), code=302
+    )
 
 
 @todo_page.post('/update/<int:tid>')
@@ -136,7 +138,9 @@ def delete_task(tid: int) -> Response:
             session.commit()
             logger.info('task with id %d successfully deleted', tid)
 
-            return redirect(url_for('.todo_list', offset=(task_num - 1) // 5 * 5), code=302)
+            return redirect(
+                url_for('.todo_list', offset=(task_num - 1) // 5 * 5), code=302
+            )
     logger.warning('task with id %d not exists!', tid)
     return abort(404)
 

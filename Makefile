@@ -1,7 +1,7 @@
 TESTS = tests
 
 VENV ?= .venv
-CODE = tests app
+CODE = todo
 
 .PHONY: help
 help: ## Show this help
@@ -24,7 +24,7 @@ lint: ## Lint code
 	$(VENV)/bin/flake8 --jobs 4 --statistics --show-source $(CODE)
 	$(VENV)/bin/pylint --jobs 4 --rcfile=setup.cfg $(CODE)
 	$(VENV)/bin/mypy $(CODE)
-	$(VENV)/bin/black --skip-string-normalization --check $(CODE)
+	$(VENV)/bin/black --line-length=80 --target-version=py39 --skip-string-normalization --check $(CODE)
 
 .PHONY: format
 format: ## Formats all files
@@ -32,6 +32,10 @@ format: ## Formats all files
 	$(VENV)/bin/black --skip-string-normalization $(CODE)
 	$(VENV)/bin/autoflake --recursive --in-place --remove-all-unused-imports $(CODE)
 	$(VENV)/bin/unify --in-place --recursive $(CODE)
+
+.PHONY: start
+start: ## Start app
+	$(VENV)/bin/python todo start
 
 .PHONY: ci
 ci:	lint test ## Lint code then run tests
