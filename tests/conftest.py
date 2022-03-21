@@ -6,6 +6,7 @@ from sqlalchemy.orm import sessionmaker
 
 from todo import Base
 from todo.__main__ import app as todo_app
+from todo.todolist.models.task import Task
 
 
 @pytest.fixture()
@@ -36,3 +37,19 @@ def test_db():
 @pytest.fixture()
 def fake_db(mocker, test_db):
     mocker.patch('todo.Session', test_db)
+
+
+@pytest.fixture()
+def fake_tasks(test_db):
+    tasks = [Task(f'test task #{i}') for i in range(5)]
+    with test_db() as session:
+        session.add_all(tasks)
+        session.commit()
+
+
+@pytest.fixture()
+def fake_tasks_100(test_db):
+    tasks = [Task(f'test task #{i}') for i in range(100)]
+    with test_db() as session:
+        session.add_all(tasks)
+        session.commit()

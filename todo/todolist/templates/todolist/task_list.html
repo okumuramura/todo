@@ -8,7 +8,11 @@
 </div>
 <div class="content">
     {% for todo in list %}
-    <div class="task{% if todo.done %} complete{% endif %}"><a href="/{{ todo.id }}">{{todo.title}}</a></div>
+    <div class="task{% if todo.done %} complete{% endif %}">
+        <a href="/done/{{ todo.id }}" class="checkbox"><div></div></a>
+        <a href="/{{ todo.id }}" class="tasktitle">{{todo.title}}</a>
+        <a href="/delete/{{ todo.id }}" class="deleter"><div></div></a>
+    </div>
     {% endfor %}
 </div>
 <div class="addform">

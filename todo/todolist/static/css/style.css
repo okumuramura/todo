@@ -30,11 +30,14 @@
     padding: 5px;
     border: 1px solid black;
     display: flex;
+    justify-content: space-between;
 }
 
-.task a {
-    text-decoration: none;
+.tasktitle {
     color: black;
+    text-decoration: none;
+    text-align: left;
+    width: 100%;
 }
 
 .addform {
@@ -66,4 +69,30 @@
 
 .complete {
     text-decoration: line-through;
+}
+
+.checkbox {
+    margin-right: 5px;
+}
+
+.checkbox > div {
+    width: 10px;
+    height: 10px;
+    border: 1px solid black;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.deleter {
+    margin-left: 5px;
+}
+
+.deleter > div {
+    width: 10px;
+    height: 10px;
+    border: 1px solid black;
+    display: inline-block;
+    cursor: pointer;
+    background: url("/todo/static/images/icon-delete.png");
+    background-size: cover;
 }

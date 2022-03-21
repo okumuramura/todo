@@ -2,18 +2,8 @@ from datetime import date
 from http import HTTPStatus
 from typing import Optional
 
-import pytest
-
 import todo
 from todo.todolist.models.task import Task
-
-
-@pytest.fixture()
-def fake_tasks(test_db):
-    tasks = [Task(f'test task #{i}') for i in range(5)]
-    with test_db() as session:
-        session.add_all(tasks)
-        session.commit()
 
 
 def test_add(fake_db):
@@ -21,11 +11,6 @@ def test_add(fake_db):
         task_list = session.query(Task).all()
 
     assert len(task_list) == 0
-
-
-def test_task_list(fake_db, client, fake_tasks):
-    response = client.get('/')
-    assert response.status_code == HTTPStatus.OK
 
 
 def test_add_task(fake_db, client):
@@ -91,4 +76,57 @@ def test_existed_task_info(fake_db, fake_tasks, client):
 def test_invalid_task_info(fake_db, fake_tasks, client):
     response = client.get('/999')
 
-    assert response.status_code == 404
+    assert response.status_code == HTTPStatus.NOT_FOUND
+
+
+def test_done_valid_task(fake_db, fake_tasks, client):
+    response = client.get('/done/1')
+
+    assert response.status_code == HTTPStatus.FOUND
+
+    with todo.Session() as session:
+        task = session.query(Task).filter(Task.id == 1).first()
+
+    assert task.done is True
+
+    response = client.get('/done/1')
+
+    assert response.status_code == HTTPStatus.FOUND
+
+    with todo.Session() as session:
+        task = session.query(Task).filter(Task.id == 1).first()
+
+    assert task.done is False
+
+
+def test_done_invalid_task(fake_db, fake_tasks, client):
+    response = client.get('/done/999')
+
+    assert response.status_code == HTTPStatus.NOT_FOUND
+
+
+def test_delete_task(fake_db, fake_tasks, client):
+    response = client.get('/delete/1')
+
+    assert response.status_code == HTTPStatus.FOUND
+
+    response = client.post('/delete/2')
+
+    assert response.status_code == HTTPStatus.FOUND
+
+    with todo.Session() as session:
+        task1 = session.query(Task).filter(Task.id == 1).first()
+        task2 = session.query(Task).filter(Task.id == 2).first()
+
+    assert task1 is None
+    assert task2 is None
+
+    response = client.post('/delete/1')
+
+    assert response.status_code == HTTPStatus.NOT_FOUND
+
+
+def test_delte_invalid_task(fake_db, fake_tasks, client):
+    response = client.post('/delete/999')
+
+    assert response.status_code == HTTPStatus.NOT_FOUND

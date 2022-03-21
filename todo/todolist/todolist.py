@@ -6,9 +6,8 @@ from flask import Blueprint, abort, redirect, render_template, request, url_for
 from werkzeug import Response
 
 import todo
-from todo.todolist.models.task import Task
 from todo import logger
-
+from todo.todolist.models.task import Task
 
 todo_page = Blueprint(
     'todo',
@@ -22,20 +21,40 @@ todo_page = Blueprint(
 @todo_page.get('/')
 def todo_list() -> Tuple[str, int]:
     search_query = request.args.get('q')
+    offset_str = request.args.get('offset', '')
     search_placeholder = ''
+
+    try:
+        offset = int(offset_str)
+    except ValueError:
+        offset = 0
 
     if search_query:
         search = f'%{search_query}%'
         search_placeholder = search_query
 
         with todo.Session() as session:
-            tasks_list = session.query(Task).filter(
-                (Task.title.like(search)) | (Task.description.like(search))).all()
+            tasks_list = (
+                session.query(Task)
+                .filter(
+                    (Task.title.like(search)) | (Task.description.ilike(search))
+                )
+                .limit(5)
+                .offset(offset)
+                .all()
+            )
 
     else:
         with todo.Session() as session:
-            tasks_list = session.query(Task).all()
-    return render_template('todolist/task_list.html', list=tasks_list, search=search_placeholder), 200
+            tasks_list = session.query(Task).limit(5).offset(offset).all()
+    return (
+        render_template(
+            'todolist/task_list.html',
+            list=tasks_list,
+            search=search_placeholder,
+        ),
+        200,
+    )
 
 
 @todo_page.post('/add')
@@ -45,7 +64,9 @@ def add_task() -> Response:
     with todo.Session() as session:
         session.add(new_task)
         session.commit()
-    logger.info(f'user with ip {request.remote_addr} added task \"{task_title}\"')
+    logger.info(
+        'user with ip %s added task \"%s\"', request.remote_addr, new_task.title
+    )
     return redirect(url_for('.todo_list'), code=302)
 
 
@@ -61,7 +82,9 @@ def update_task(tid: int) -> Response:
         task_true_date = None
 
     with todo.Session() as session:
-        task: Optional[Task] = session.query(Task).filter(Task.id == tid).first()
+        task: Optional[Task] = (
+            session.query(Task).filter(Task.id == tid).first()
+        )
 
         if task is not None:
             task.title = task_title
@@ -69,9 +92,46 @@ def update_task(tid: int) -> Response:
             task.date = task_true_date
 
             session.commit()
-            logger.info(f'task with id {tid} successfully updated')
+            logger.info('task with id %d successfully updated', tid)
             return redirect(url_for('.todo_list'), code=302)
-    logger.warning(f'task with id {tid} not exists!')
+    logger.warning('task with id %d not exists!', tid)
+    return abort(404)
+
+
+@todo_page.route('/done/<int:tid>', methods=['GET', 'POST'])
+def done_task(tid: int) -> Response:
+    with todo.Session() as session:
+        task: Optional[Task] = (
+            session.query(Task).filter(Task.id == tid).first()
+        )
+
+        if task is not None:
+            task.done = not task.done
+
+            session.commit()
+            logger.info(
+                'task with id %d now has done status: %d', tid, int(task.done)
+            )
+
+            return redirect(url_for('.todo_list'), code=302)
+    logger.warning('task with id %d not exists!', tid)
+    return abort(404)
+
+
+@todo_page.route('/delete/<int:tid>', methods=['GET', 'POST'])
+def delete_task(tid: int) -> Response:
+    with todo.Session() as session:
+        task: Optional[Task] = (
+            session.query(Task).filter(Task.id == tid).first()
+        )
+
+        if task is not None:
+            session.delete(task)
+            session.commit()
+            logger.info('task with id %d successfully deleted', tid)
+
+            return redirect(url_for('.todo_list'), code=302)
+    logger.warning('task with id %d not exists!', tid)
     return abort(404)
 
 
@@ -81,7 +141,7 @@ def show_task(tid: int) -> str:
         task = session.query(Task).filter(Task.id == tid).first()
     if task is not None:
         return render_template('todolist/task_info.html', todo=task)
-    logger.warning(f'task with id {tid} not exists!')
+    logger.warning('task with id %d not exists!', tid)
     return abort(404)
 
 
