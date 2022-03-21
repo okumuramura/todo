@@ -35,7 +35,7 @@ format: ## Formats all files
 
 .PHONY: start
 start: ## Start app
-	$(VENV)/bin/python todo start
+	$(VENV)/bin/python -m todo start
 
 .PHONY: ci
 ci:	lint test ## Lint code then run tests

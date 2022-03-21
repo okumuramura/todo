@@ -19,7 +19,7 @@ poetry install
 ## Start App
 ```bash
 poetry shell
-python todo start
+python -m todo start
 # or
 make start
 ```
