@@ -96,3 +96,18 @@
     background: url("/todo/static/images/icon-delete.png");
     background-size: cover;
 }
+
+.pager {
+    display: flex;
+    justify-content: center;
+}
+
+.pager a {
+    text-decoration: underline;
+    color: black;
+    margin: 10px;
+}
+
+.current {
+    font-weight: bold;
+}

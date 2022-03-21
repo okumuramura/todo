@@ -6,6 +6,13 @@
         <input type="text" name="q" id="q" placeholder="Поиск" value="{{ search }}">
     </form>
 </div>
+{% if pages|length > 1 %}
+<div class="pager">
+    {% for page in pages %}
+    <a href="/?{% if query %}q={{query}}&{% endif %}offset={{page * 5}}" class="{% if page == current_page %}current{% endif %}">{{page + 1}}</p>
+    {% endfor %}
+</div>
+{% endif %}
 <div class="content">
     {% for todo in list %}
     <div class="task{% if todo.done %} complete{% endif %}">
