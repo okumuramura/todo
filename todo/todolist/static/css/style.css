@@ -1,0 +1,113 @@
+.header {
+    text-align: center;
+    border-bottom: 1px solid black;
+    margin-top: 10px;
+    padding-bottom: 10px;
+    margin-bottom: 25px;
+    height: 20px;
+}
+
+.header a {
+    text-decoration: none;
+    color: black;
+    font-weight: bold;
+}
+
+.header a:hover {
+    text-decoration: underline;
+}  
+
+.content {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    width: 60%;
+    margin: auto;
+}
+
+.task {
+    margin: 10px;
+    padding: 5px;
+    border: 1px solid black;
+    display: flex;
+    justify-content: space-between;
+}
+
+.tasktitle {
+    color: black;
+    text-decoration: none;
+    text-align: left;
+    width: 100%;
+}
+
+.addform {
+    text-align: center;
+    /* border: 1px solid black; */
+    padding: 20px 0px 20px 0px;
+    width: 60%;
+    margin: auto;
+}
+
+.addform p{
+    margin: 0;
+}
+
+.addform input[type=text] {
+    width: 40%;
+}
+
+.searcher {
+    display: flex;
+    justify-content: center;
+    margin-top: -10px;
+    margin-bottom: 20px;
+}
+
+.searcher input {
+    width: 350px;
+}
+
+.complete {
+    text-decoration: line-through;
+}
+
+.checkbox {
+    margin-right: 5px;
+}
+
+.checkbox > div {
+    width: 10px;
+    height: 10px;
+    border: 1px solid black;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.deleter {
+    margin-left: 5px;
+}
+
+.deleter > div {
+    width: 10px;
+    height: 10px;
+    border: 1px solid black;
+    display: inline-block;
+    cursor: pointer;
+    background: url("/todo/static/images/icon-delete.png");
+    background-size: cover;
+}
+
+.pager {
+    display: flex;
+    justify-content: center;
+}
+
+.pager a {
+    text-decoration: underline;
+    color: black;
+    margin: 10px;
+}
+
+.current {
+    font-weight: bold;
+}

@@ -1,0 +1,14 @@
+{% extends 'todolist/index.html' %}
+
+{% block content %}
+<div class="content">
+    <div>Ваша задача:</div>
+    <form action="/update/{{ todo.id }}" method="post">
+        <input type="text" name="title" id="title" value="{{ todo.title }}">
+        <input type="text" name="description" id="desc" value="{{ todo.description }}" placeholder="Описание">
+        <input type="date" name="date" id="date" value="{{ todo.date }}">
+        <input type="submit" value="Применить">
+    </form>
+    
+</div>
+{% endblock %}

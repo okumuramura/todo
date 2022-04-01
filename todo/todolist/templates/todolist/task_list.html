@@ -1,0 +1,32 @@
+{% extends 'todolist/index.html' %}
+
+{% block content %}
+<div class="searcher">
+    <form action="/" method="get">
+        <input type="text" name="q" id="q" placeholder="Поиск" value="{{ search }}">
+    </form>
+</div>
+{% if pages|length > 1 %}
+<div class="pager">
+    {% for page in pages %}
+    <a href="/?{% if query %}q={{query}}&{% endif %}offset={{page * 5}}" class="{% if page == current_page %}current{% endif %}">{{page + 1}}</p>
+    {% endfor %}
+</div>
+{% endif %}
+<div class="content">
+    {% for todo in list %}
+    <div class="task{% if todo.done %} complete{% endif %}">
+        <a href="/done/{{ todo.id }}" class="checkbox"><div></div></a>
+        <a href="/{{ todo.id }}" class="tasktitle">{{todo.title}}</a>
+        <a href="/delete/{{ todo.id }}" class="deleter"><div></div></a>
+    </div>
+    {% endfor %}
+</div>
+<div class="addform">
+    <p>Новая задача:</p>
+    <form method="post" action="/add">
+        <input type="text" name="title" id="title">
+        <input type="submit" value="Добавить">
+    </form>
+</div>
+{% endblock %}
